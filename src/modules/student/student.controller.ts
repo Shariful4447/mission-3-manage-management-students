@@ -5,14 +5,9 @@ import { StudentServices } from "./students.service";
 import { z } from "zod";
 import studentValidationSchema from "./student.zod.validation";
 import globalErrorHandlers from "../../middlewares/globalErrorHandlers";
+import catchAsync from "../../utils/catchAsync";
 
-const catchAsync = (fn: RequestHandler) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch((err) => next(err));
-  };
-};
-
-export const getAllStudents = catchAsync(async (req, res, next) => {
+export const getAllStudents = catchAsync(async (req, res) => {
   const result = await StudentServices.getAllStudentsFromDB();
   res.status(200).json({
     success: true,
@@ -21,33 +16,25 @@ export const getAllStudents = catchAsync(async (req, res, next) => {
   });
 });
 
-const getSingleStudents: RequestHandler = async (req, res, next) => {
-  try {
-    const { studentId } = req.params;
-    const result = await StudentServices.getSingleStudentsFromDB(studentId);
-    res.status(200).json({
-      success: true,
-      message: "single Students are retrived successfully",
-      data: result,
-    });
-  } catch (err: any) {
-    next(err);
-  }
-};
-const deleteStudent: RequestHandler = async (req, res, next) => {
-  try {
-    const { studentId } = req.params;
-    const result = await StudentServices.deleteStudentFromDB(studentId);
+const getSingleStudents: RequestHandler = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const result = await StudentServices.getSingleStudentsFromDB(studentId);
+  res.status(200).json({
+    success: true,
+    message: "single Students are retrived successfully",
+    data: result,
+  });
+});
+const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const result = await StudentServices.deleteStudentFromDB(studentId);
 
-    res.status(200).json({
-      success: true,
-      message: "students deleted successfully",
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  res.status(200).json({
+    success: true,
+    message: "students deleted successfully",
+    data: result,
+  });
+});
 
 export const StudentControllers = {
   // createStudent,
