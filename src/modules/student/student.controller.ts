@@ -16,7 +16,7 @@ export const getAllStudents = catchAsync(async (req, res) => {
   });
 });
 
-const getSingleStudents: RequestHandler = catchAsync(async (req, res) => {
+const getSingleStudents = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.getSingleStudentsFromDB(studentId);
   res.status(200).json({
@@ -25,7 +25,7 @@ const getSingleStudents: RequestHandler = catchAsync(async (req, res) => {
     data: result,
   });
 });
-const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
+const deleteStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.deleteStudentFromDB(studentId);
 

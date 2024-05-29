@@ -33,23 +33,28 @@ const localGurdianValidationSchema = z.object({
 });
 
 // Zod schema for Student
-const studentValidationSchema = z.object({
-  id: z.string().min(1, "ID required"),
-  password: z.string().max(20, "password is required"),
-  name: userNameValidationSchema,
-  gender: z.enum(["male", "female", "other"]),
-  dateOfBirth: z.string().optional(),
-  email: z.string().email("Invalid email format").min(1, "Email required"),
-  constactNumber: z.string().min(1, "Contact Number required"),
-  emergencyContactNo: z.string().min(1, "Emergency Contact Number required"),
-  bloodGroup: z
-    .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
-    .optional(),
-  presentAddress: z.string().min(1, "Present Address required"),
-  permanentAddress: z.string().min(1, "Permanent Address required"),
-  gurdian: gurdianValidationSchema,
-  localGurdian: localGurdianValidationSchema,
-  profileImage: z.string().optional(),
-  isActive: z.enum(["active", "blocked"]).default("active"),
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20, "password is required"),
+    student: z.object({
+      name: userNameValidationSchema,
+      gender: z.enum(["male", "female", "other"]),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email("Invalid email format").min(1, "Email required"),
+      constactNumber: z.string().min(1, "Contact Number required"),
+      emergencyContactNo: z
+        .string()
+        .min(1, "Emergency Contact Number required"),
+      bloodGroup: z
+        .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
+        .optional(),
+      presentAddress: z.string().min(1, "Present Address required"),
+      permanentAddress: z.string().min(1, "Permanent Address required"),
+      gurdian: gurdianValidationSchema,
+      localGurdian: localGurdianValidationSchema,
+      profileImage: z.string().optional(),
+    }),
+  }),
 });
-export default studentValidationSchema;
+
+export default createStudentValidationSchema;
