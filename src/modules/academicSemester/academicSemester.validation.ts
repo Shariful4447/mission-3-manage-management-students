@@ -6,7 +6,7 @@ import {
 } from "./academicSemester.constants";
 
 // Zod schema for Student
-const createAcademicSsemesterValidationSchema = z.object({
+const createAcademicSemesterValidationSchema = z.object({
   body: z.object({
     name: z.enum([...AcademicSemesterName] as [string, ...string[]]),
     year: z.string(),
@@ -16,5 +16,5 @@ const createAcademicSsemesterValidationSchema = z.object({
   }),
 });
 export const AcademicSemesterValidation = {
-  createAcademicSsemesterValidationSchema,
+  createAcademicSemesterValidationSchema,
 };

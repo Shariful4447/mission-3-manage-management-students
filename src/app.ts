@@ -1,12 +1,14 @@
 import express, { NextFunction, Request, Response } from "express";
 import globalErrorHandlers from "./middlewares/globalErrorHandlers";
 import notFound from "./middlewares/notFoundErrorhandler";
+import cors from "cors";
 import router from "./app/routes";
 const app = express();
 const port = 3000;
 
 //parser json
 app.use(express.json());
+app.use(cors());
 app.use("/api/v1/", router);
 
 const test = (req: Request, res: Response) => {
