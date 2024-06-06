@@ -36,6 +36,7 @@ export type TStudent = {
   gurdian: TGurdian;
   localGurdian: TLocalGurdian;
   profileImage?: string;
+  admissionSemester: Types.ObjectId;
 };
 
 // for creating static instances
