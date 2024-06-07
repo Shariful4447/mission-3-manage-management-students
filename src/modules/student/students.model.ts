@@ -141,7 +141,10 @@ const studentSchema = new Schema<TStudent, StudentModel>({
   //   enum: ["active", "blocked"],
   //   default: "active",
   // },
-  admissionSemester: { type: String, required: true },
+  admissionSemester: {
+    type: Schema.Types.ObjectId,
+    ref: "AcademicSemester",
+  },
 });
 
 // creating a custom static methods
