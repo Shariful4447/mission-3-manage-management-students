@@ -54,6 +54,7 @@ const createStudentValidationSchema = z.object({
       localGurdian: localGurdianValidationSchema,
       profileImage: z.string().optional(),
       admissionSemester: z.string(),
+      academicDepartment: z.string(),
     }),
   }),
 });
