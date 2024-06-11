@@ -20,14 +20,24 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 const getAllStudentsFromDB = async () => {
   const result = await Student.find()
     .populate("admissionSemester")
-    .populate("academicDepartment");
+    .populate({
+      path: "academicDepartment",
+      populate: {
+        path: "academicFaculty",
+      },
+    });
   return result;
 };
 
 const getSingleStudentsFromDB = async (id: string) => {
   const result = await Student.findOne({ id })
     .populate("admissionSemester")
-    .populate("academicDepartment");
+    .populate({
+      path: "academicDepartment",
+      populate: {
+        path: "academicFaculty",
+      },
+    });
   return result;
 };
 const deleteStudentFromDB = async (id: string) => {
