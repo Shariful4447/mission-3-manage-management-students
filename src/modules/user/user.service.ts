@@ -6,6 +6,7 @@ import { TUser } from "./user.interface";
 import { User } from "./user.model";
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
 import { generateStudentId } from "./user.utils";
+import mongoose from "mongoose";
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   //   if (await Student.isUserExists(payload.id)) {
@@ -28,24 +29,30 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   );
   console.log(admissionSemester);
 
-  //   auto generated id
-  if (!admissionSemester) {
-    throw new Error("Admission semester not found");
-  } else {
-    userData.id = await generateStudentId(admissionSemester);
-  }
+  const session = await mongoose.startSession();
 
-  // create a user model
-  const newUser = await User.create(userData);
-  //   create a student
-  if (Object.keys(newUser).length) {
-    //set id, _id as user
-    payload.id = newUser.id;
-    payload.user = newUser._id; //reference id
-    const newStudent = await Student.create(payload);
-    return newStudent;
-  }
-  return newUser;
+  // transction and roollback
+
+  try {
+    //   auto generated id
+    if (!admissionSemester) {
+      throw new Error("Admission semester not found");
+    } else {
+      userData.id = await generateStudentId(admissionSemester);
+    }
+
+    // create a user model
+    const newUser = await User.create(userData);
+    //   create a student
+    if (Object.keys(newUser).length) {
+      //set id, _id as user
+      payload.id = newUser.id;
+      payload.user = newUser._id; //reference id
+      const newStudent = await Student.create(payload);
+      return newStudent;
+    }
+    return newUser;
+  } catch (err) {}
 };
 
 export const UserService = {
