@@ -7,6 +7,8 @@ import { User } from "./user.model";
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
 import { generateStudentId } from "./user.utils";
 import mongoose from "mongoose";
+import AppError from "../../app/errors/AppError";
+import httpStatus from "http-status";
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   //   if (await Student.isUserExists(payload.id)) {
@@ -34,6 +36,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // transction and roollback
 
   try {
+    session.startTransaction();
     //   auto generated id
     if (!admissionSemester) {
       throw new Error("Admission semester not found");
@@ -41,18 +44,30 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
       userData.id = await generateStudentId(admissionSemester);
     }
 
-    // create a user model
-    const newUser = await User.create(userData);
+    // create a transction-1
+    const newUser = await User.create([userData], { session });
     //   create a student
-    if (Object.keys(newUser).length) {
-      //set id, _id as user
-      payload.id = newUser.id;
-      payload.user = newUser._id; //reference id
-      const newStudent = await Student.create(payload);
-      return newStudent;
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, "faild to create user");
     }
-    return newUser;
-  } catch (err) {}
+    //set id, _id as user
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id; //reference id
+    // create a transction-2
+    const newStudent = await Student.create([payload], { session });
+    if (!newStudent.length) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "failed to create new student"
+      );
+    }
+    await session.commitTransaction();
+    await session.endSession();
+    return newStudent;
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
 };
 
 export const UserService = {
