@@ -3,7 +3,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import { StudentServices } from "./students.service";
 // import studentValidationSchema from "./student.validation";
 import { z } from "zod";
-import studentValidationSchema from "./student.zod.validation";
+
 import globalErrorHandlers from "../../middlewares/globalErrorHandlers";
 import catchAsync from "../../utils/catchAsync";
 
@@ -25,6 +25,17 @@ const getSingleStudents = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const updateStudent = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const { student } = req.body;
+  const result = await StudentServices.updateStudentFromDB(studentId, student);
+
+  res.status(200).json({
+    success: true,
+    message: "students Upadated successfully",
+    data: result,
+  });
+});
 const deleteStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.deleteStudentFromDB(studentId);
@@ -40,5 +51,6 @@ export const StudentControllers = {
   // createStudent,
   getAllStudents,
   getSingleStudents,
+  updateStudent,
   deleteStudent,
 };
