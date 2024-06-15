@@ -45,9 +45,42 @@ const getSingleStudentsFromDB = async (id: string) => {
   return result;
 };
 const updateStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
-  const result = await Student.findOneAndUpdate({ id }, payload);
+  const { name, gurdian, localGurdian, ...reaminingStudentData } = payload;
+  const modifiedUpdatedData: Record<string, unknown> = {
+    ...reaminingStudentData,
+  };
+  /*
+  gurdian:{
+    "fatherOcupation": "Teacher"
+  } 
+  /instead we use 
+  gurdian.fatherOcupation = "Teacher" to avoid mutation
+  */
+
+  if (name && Object.keys(name).length) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedUpdatedData[`name.${key}`] = value;
+    }
+  }
+  if (gurdian && Object.keys(gurdian).length) {
+    for (const [key, value] of Object.entries(gurdian)) {
+      modifiedUpdatedData[`gurdian.${key}`] = value;
+    }
+  }
+  if (localGurdian && Object.keys(localGurdian).length) {
+    for (const [key, value] of Object.entries(localGurdian)) {
+      modifiedUpdatedData[`localGurdian.${key}`] = value;
+    }
+  }
+  console.log(modifiedUpdatedData);
+
+  const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
+    new: true,
+    runValidators: true,
+  });
   return result;
 };
+
 const deleteStudentFromDB = async (id: string) => {
   // start session
   const session = await mongoose.startSession();
@@ -75,6 +108,7 @@ const deleteStudentFromDB = async (id: string) => {
   } catch (err) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error("Failed to delete student");
   }
 };
 
