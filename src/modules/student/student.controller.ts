@@ -8,7 +8,7 @@ import globalErrorHandlers from "../../middlewares/globalErrorHandlers";
 import catchAsync from "../../utils/catchAsync";
 
 export const getAllStudents = catchAsync(async (req, res) => {
-  const result = await StudentServices.getAllStudentsFromDB();
+  const result = await StudentServices.getAllStudentsFromDB(req.query);
   res.status(200).json({
     success: true,
     message: "Students are retrived successfully",
