@@ -1,6 +1,7 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { ZodError, ZodIssue } from "zod";
 import { TErrorSource } from "../app/interface/error";
+import config from "../config";
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // setting default value
@@ -23,7 +24,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     const statusCode = 400;
     return {
       statusCode,
-      message: "Zod Validation Error",
+      message: "Validation Error",
       errorSources,
     };
   };
@@ -39,6 +40,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     success: false,
     message,
     errorSources,
+    stack: config.node_env === "development" ? err?.stack : null,
     // error: err,
   });
 };
