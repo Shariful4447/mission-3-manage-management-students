@@ -24,6 +24,9 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentSearchFields = ["email", "name.firstName", "presentAddress"];
   let searchTerm = "";
+  console.log("base query", query);
+  const queryObj = { ...query };
+
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
   }
@@ -33,8 +36,14 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
       [field]: { $regex: searchTerm, $options: "i" },
     })),
   });
+
+  // filtering
+  const excludeFields = ["searchTerm"];
+  excludeFields.forEach((el) => delete queryObj[el]);
+  console.log("After removing search term the rest query ob", queryObj);
+
   const result = await searchQuery
-    .find(query)
+    .find(queryObj)
     .populate("admissionSemester")
     .populate({
       path: "academicDepartment",
