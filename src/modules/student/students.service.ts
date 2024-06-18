@@ -24,7 +24,7 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentSearchFields = ["email", "name.firstName", "presentAddress"];
   let searchTerm = "";
-  console.log("base query", query);
+
   const queryObj = { ...query };
 
   if (query?.searchTerm) {
@@ -38,9 +38,14 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   });
 
   // filtering
-  const excludeFields = ["searchTerm", "sort", "limit"];
+  const excludeFields = ["searchTerm", "sort", "limit", "page", "fields"];
   excludeFields.forEach((el) => delete queryObj[el]);
-  console.log("After removing search term the rest query ob", queryObj);
+  console.log(
+    "base query",
+    { query },
+    "After removing search term the rest query ob",
+    { queryObj }
+  );
 
   const filterQuery = searchQuery
     .find(queryObj)
@@ -56,12 +61,32 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
     sort = query.sort as string;
   }
   const sortQuery = filterQuery.sort(sort);
+  let page = 1;
   let limit = 1;
+  let skip = 0;
   if (query.limit) {
-    limit = query.limit as number;
+    limit = Number(query.limit);
   }
-  const limitQuery = await sortQuery.limit(limit);
-  return limitQuery;
+  if (query.page) {
+    page = Number(query.page);
+    skip = (page - 1) * limit;
+  }
+  const paginateQury = sortQuery.skip(skip);
+
+  const limitQuery = paginateQury.limit(limit);
+
+  // field limiting
+
+  let fields = "-__v";
+  if (query.fields) {
+    // field: 'name,email' =>'name email'
+    fields = (query.fields as string).split(",").join(" ");
+    console.log({ fields });
+  }
+
+  const fieldQury = await limitQuery.select(fields);
+
+  return fieldQury;
 };
 
 const getSingleStudentsFromDB = async (id: string) => {
