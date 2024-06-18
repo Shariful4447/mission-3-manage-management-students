@@ -22,15 +22,19 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 };
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  const studentSearchFields = ["email", "name.firstName", "presentAddress"];
   let searchTerm = "";
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
   }
-  const result = await Student.find({
-    $or: ["email", "name.firstName", "presentAddress"].map((field) => ({
+
+  const searchQuery = Student.find({
+    $or: studentSearchFields.map((field) => ({
       [field]: { $regex: searchTerm, $options: "i" },
     })),
-  })
+  });
+  const result = await searchQuery
+    .find(query)
     .populate("admissionSemester")
     .populate({
       path: "academicDepartment",
