@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import AppError from "../../app/errors/AppError";
 import httpStatus from "http-status";
 import { User } from "../user/user.model";
+import QueryBuilder from "../../app/builder/QueryBuilder";
+import { studentSearchFields } from "./student.constant";
 
 const createStudentIntoDB = async (studentData: TStudent) => {
   if (await Student.isUserExists(studentData.id)) {
@@ -22,71 +24,79 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 };
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  const studentSearchFields = ["email", "name.firstName", "presentAddress"];
-  let searchTerm = "";
+  // const studentSearchFields = ["email", "name.firstName", "presentAddress"];
+  // let searchTerm = "";
 
-  const queryObj = { ...query };
+  // const queryObj = { ...query };
 
-  if (query?.searchTerm) {
-    searchTerm = query?.searchTerm as string;
-  }
+  // if (query?.searchTerm) {
+  //   searchTerm = query?.searchTerm as string;
+  // }
 
-  const searchQuery = Student.find({
-    $or: studentSearchFields.map((field) => ({
-      [field]: { $regex: searchTerm, $options: "i" },
-    })),
-  });
+  // const searchQuery = Student.find({
+  //   $or: studentSearchFields.map((field) => ({
+  //     [field]: { $regex: searchTerm, $options: "i" },
+  //   })),
+  // });
 
-  // filtering
-  const excludeFields = ["searchTerm", "sort", "limit", "page", "fields"];
-  excludeFields.forEach((el) => delete queryObj[el]);
-  console.log(
-    "base query",
-    { query },
-    "After removing search term the rest query ob",
-    { queryObj }
-  );
+  // // filtering
+  // const excludeFields = ["searchTerm", "sort", "limit", "page", "fields"];
+  // excludeFields.forEach((el) => delete queryObj[el]);
+  // console.log(
+  //   "base query",
+  //   { query },
+  //   "After removing search term the rest query ob",
+  //   { queryObj }
+  // );
 
-  const filterQuery = searchQuery
-    .find(queryObj)
-    .populate("admissionSemester")
-    .populate({
-      path: "academicDepartment",
-      populate: {
-        path: "academicFaculty",
-      },
-    });
-  let sort = "-createdAt";
-  if (query.sort) {
-    sort = query.sort as string;
-  }
-  const sortQuery = filterQuery.sort(sort);
-  let page = 1;
-  let limit = 1;
-  let skip = 0;
-  if (query.limit) {
-    limit = Number(query.limit);
-  }
-  if (query.page) {
-    page = Number(query.page);
-    skip = (page - 1) * limit;
-  }
-  const paginateQury = sortQuery.skip(skip);
+  // const filterQuery = searchQuery
+  //   .find(queryObj)
+  //   .populate("admissionSemester")
+  //   .populate({
+  //     path: "academicDepartment",
+  //     populate: {
+  //       path: "academicFaculty",
+  //     },
+  //   });
+  // let sort = "-createdAt";
+  // if (query.sort) {
+  //   sort = query.sort as string;
+  // }
+  // const sortQuery = filterQuery.sort(sort);
+  // let page = 1;
+  // let limit = 1;
+  // let skip = 0;
+  // if (query.limit) {
+  //   limit = Number(query.limit);
+  // }
+  // if (query.page) {
+  //   page = Number(query.page);
+  //   skip = (page - 1) * limit;
+  // }
+  // const paginateQury = sortQuery.skip(skip);
 
-  const limitQuery = paginateQury.limit(limit);
+  // const limitQuery = paginateQury.limit(limit);
 
-  // field limiting
+  // // field limiting
 
-  let fields = "-__v";
-  if (query.fields) {
-    // field: 'name,email' =>'name email'
-    fields = (query.fields as string).split(",").join(" ");
-    console.log({ fields });
-  }
+  // let fields = "-__v";
+  // if (query.fields) {
+  //   // field: 'name,email' =>'name email'
+  //   fields = (query.fields as string).split(",").join(" ");
+  //   console.log({ fields });
+  // }
 
-  const fieldQury = await limitQuery.select(fields);
+  // const fieldQury = await limitQuery.select(fields);
 
-  return fieldQury;
+  // return fieldQury;
+  const studentQuery = new QueryBuilder(Student.find(), query)
+    .search(studentSearchFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await studentQuery.modelQuery;
+  return result;
 };
 
 const getSingleStudentsFromDB = async (id: string) => {
