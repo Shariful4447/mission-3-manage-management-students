@@ -24,6 +24,41 @@ const createCourseValidationSchema = z.object({
   }),
   isDeleted: z.boolean().optional(),
 });
+const updatePreRequisiteCoursesValidationSchema = z.object({
+  course: z.string(),
+  isDeleted: z.boolean().optional(),
+});
+
+const updateCourseValidationSchema = z.object({
+  body: z.object({
+    title: z
+      .string({
+        invalid_type_error: "Course Title should be string",
+      })
+      .optional(),
+    prefix: z
+      .string({
+        invalid_type_error: "Prefix should be String",
+      })
+      .optional(),
+    code: z
+      .number({
+        invalid_type_error: "Prefix should be Number",
+      })
+      .optional(),
+    credits: z
+      .number({
+        invalid_type_error: "Prefix should be Number",
+      })
+      .optional(),
+    preRequisiteCourses: z
+      .array(updatePreRequisiteCoursesValidationSchema)
+      .optional(),
+  }),
+  isDeleted: z.boolean().optional(),
+});
+
 export const CourseVlidationSchema = {
   createCourseValidationSchema,
+  updateCourseValidationSchema,
 };

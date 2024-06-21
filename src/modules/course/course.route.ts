@@ -9,6 +9,11 @@ router.post(
   validateRequest(CourseVlidationSchema.createCourseValidationSchema),
   CourseController.createCourse
 );
+router.patch(
+  "/:id",
+  validateRequest(CourseVlidationSchema.updateCourseValidationSchema),
+  CourseController.updateCourse
+);
 
 router.get("/", CourseController.getAllCourse);
 router.get("/:id", CourseController.getSingleCourse);
