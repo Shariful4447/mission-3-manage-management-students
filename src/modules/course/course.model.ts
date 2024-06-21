@@ -35,4 +35,4 @@ const courseSchema = new Schema<TCourse>({
   preRequisiteCourses: [preRequisitecoursesSchema],
 });
 
-const Course = model<TCourse>("Course", courseSchema);
+export const Course = model<TCourse>("Course", courseSchema);
