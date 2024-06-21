@@ -22,6 +22,7 @@ const createCourseValidationSchema = z.object({
       .array(createPreRequisiteCoursesValidationSchema)
       .optional(),
   }),
+  isDeleted: z.boolean().optional(),
 });
 export const CourseVlidationSchema = {
   createCourseValidationSchema,
