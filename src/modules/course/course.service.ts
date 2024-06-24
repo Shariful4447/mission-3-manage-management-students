@@ -150,6 +150,21 @@ const assignCourseFacultyIntoDB = async (
   );
   return result;
 };
+const removeCourseFacultyIntoDB = async (
+  id: string,
+  payload: Partial<TCourseFaculty>
+) => {
+  const result = await CourseFaculty.findByIdAndUpdate(
+    id,
+    {
+      $pull: { faculties: { $in: payload } },
+    },
+    {
+      new: true,
+    }
+  );
+  return result;
+};
 
 export const CourseService = {
   createCourseIntoDB,
@@ -158,4 +173,5 @@ export const CourseService = {
   deleteCourseFromDB,
   updateCourseIntoDB,
   assignCourseFacultyIntoDB,
+  removeCourseFacultyIntoDB,
 };
