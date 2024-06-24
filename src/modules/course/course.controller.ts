@@ -60,10 +60,11 @@ const assignFaculties = catchAsync(async (req, res) => {
     courseId,
     faculties
   );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Assign Faculty successfully",
+    message: "Faculties assigned  succesfully",
     data: result,
   });
 });
