@@ -16,4 +16,9 @@ router.get(
 
   SemesterRegistrationController.getAllSemesterRegistrations
 );
+router.get(
+  "/:id",
+
+  SemesterRegistrationController.getSingleSeemsterRegistration
+);
 export const SemesterRegistrationRoutes = router;
