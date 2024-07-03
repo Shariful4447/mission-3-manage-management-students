@@ -13,7 +13,7 @@ const createSemesterRegistrationValidationSchema = z.object({
 });
 const upadateSemesterRegistrationValidationSchema = z.object({
   body: z.object({
-    academicSemester: z.string(),
+    academicSemester: z.string().optional(),
     status: z.enum([...(SemesterRegistrationStatus as [string, ...string[]])]),
     startDate: z.string().datetime(),
     endDate: z.string().datetime(),

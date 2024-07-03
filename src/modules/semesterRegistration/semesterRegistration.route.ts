@@ -11,6 +11,13 @@ router.post(
   ),
   SemesterRegistrationController.createSemesterRegistration
 );
+router.patch(
+  "/update-semester-registration",
+  validateRequest(
+    SemesterRegistrationValidations.upadateSemesterRegistrationValidationSchema
+  ),
+  SemesterRegistrationController.updateSingleSeemsterRegistration
+);
 router.get(
   "/",
 
