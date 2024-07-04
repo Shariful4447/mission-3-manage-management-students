@@ -53,7 +53,7 @@ const getSingleSemesterRegistrationFromDB = async (id: string) => {
 
   return result;
 };
-const updateSemesterRegistrationIntoDB = async () => {};
+const updateSemesterRegistrationIntoDB = async (id: string) => {};
 const deleteSemesterRegistrationFromDB = async () => {};
 export const SemesterRegistrationService = {
   createSemesterRegistrationIntoDB,
