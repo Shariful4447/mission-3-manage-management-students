@@ -6,7 +6,10 @@ import { TSemesterRegistration } from "./semesterRegistration.interface";
 import { SemesterRegistration } from "./semesterRegistration.model";
 import httpStatus from "http-status";
 import QueryBuilder from "../../app/builder/QueryBuilder";
-import { SemesterRegistrationSearchableFields } from "./semesterRegistration.constant";
+import {
+  RegistrationStatus,
+  SemesterRegistrationSearchableFields,
+} from "./semesterRegistration.constant";
 
 const createSemesterRegistrationIntoDB = async (
   payload: TSemesterRegistration
@@ -18,9 +21,9 @@ const createSemesterRegistrationIntoDB = async (
     await SemesterRegistration.findOne({
       $or: [
         {
-          status: "UPCOMING",
+          status: RegistrationStatus.UPCOMING,
         },
-        { status: "ONGOING" },
+        { status: RegistrationStatus.ONGOING },
       ],
     });
   if (isTehereAnyUpcomingOrOngoingSemester) {
@@ -84,7 +87,7 @@ const updateSemesterRegistrationIntoDB = async (
   // TODO: if the requested semseterRegistration is ededd we will not update anything
   const currentSemesterStatus = isSemesterRegistrationExists?.status;
   const requestedSemesterStatus = payload?.status;
-  if (currentSemesterStatus === "ENDED") {
+  if (currentSemesterStatus === RegistrationStatus.ENDED) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       `This Semester already ${currentSemesterStatus}`
@@ -92,8 +95,8 @@ const updateSemesterRegistrationIntoDB = async (
   }
   //   upcoming ---> Onging--->ended possible but not opposite
   if (
-    currentSemesterStatus === "UPCOMING" &&
-    requestedSemesterStatus === "ENDED"
+    currentSemesterStatus === RegistrationStatus.UPCOMING &&
+    requestedSemesterStatus === RegistrationStatus.ENDED
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -102,8 +105,8 @@ const updateSemesterRegistrationIntoDB = async (
   }
 
   if (
-    currentSemesterStatus === "ONGOING" &&
-    requestedSemesterStatus === "UPCOMING"
+    currentSemesterStatus === RegistrationStatus.ONGOING &&
+    requestedSemesterStatus === RegistrationStatus.UPCOMING
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
