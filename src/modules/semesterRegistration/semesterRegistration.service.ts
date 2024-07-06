@@ -26,7 +26,7 @@ const createSemesterRegistrationIntoDB = async (
   if (isTehereAnyUpcomingOrOngoingSemester) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `There  is already a ${isTehereAnyUpcomingOrOngoingSemester.status} Exists`
+      `There  is already a ${isTehereAnyUpcomingOrOngoingSemester.status} semester Exists`
     );
   }
 
@@ -71,7 +71,19 @@ const getSingleSemesterRegistrationFromDB = async (id: string) => {
 
   return result;
 };
-const updateSemesterRegistrationIntoDB = async (id: string) => {};
+const updateSemesterRegistrationIntoDB = async (
+  id: string,
+  payload: Partial<TSemesterRegistration>
+) => {
+  // TODO: if the requested semseterRegistration is ededd we will not update anything
+  const requestedSemester = await SemesterRegistration.findById(id);
+  if (requestedSemester?.status === "ENDED") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `This Semester already ${requestedSemester.status}`
+    );
+  }
+};
 const deleteSemesterRegistrationFromDB = async () => {};
 export const SemesterRegistrationService = {
   createSemesterRegistrationIntoDB,
