@@ -49,7 +49,7 @@ const updateSingleSeemsterRegistration = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Single Semster Registration is retrived succesfully",
+    message: "Semster Registration is Updated succesfully",
     data: result,
   });
 });
