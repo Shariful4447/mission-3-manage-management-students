@@ -7,7 +7,8 @@ const timeStringSchema = z.string().refine(
     return regex.test(time);
   },
   {
-    message: 'Invalid time format , expected "HH:MM" in 24 hours format',
+    message:
+      'Invalid time format , expected "HH:MM" in 24 hours format for Start and end time',
   }
 );
 
