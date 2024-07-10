@@ -16,6 +16,9 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     course,
     section,
     faculty,
+    days,
+    startTime,
+    endTime,
   } = payload;
   // check if the semester registration is exists
   const isSemesterRegistrationExists = await SemesterRegistration.findById(
@@ -74,6 +77,20 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
       "Offred course with saame section already exists"
     );
   }
+
+  //   get the schedule of faculties in order to remove the conflicts of time
+
+  const assignSchedulesOfFaculties = await OfferedCourse.find({
+    semesterRegistration,
+    faculty,
+  }).select("days startTime and endTime");
+
+  const newSchedule = {
+    days,
+    startTime,
+    endTime,
+  };
+
   const result = await OfferedCourse.create({ ...payload, academicSemester });
   return result;
 };
