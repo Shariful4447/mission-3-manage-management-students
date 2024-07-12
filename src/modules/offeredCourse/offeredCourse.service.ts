@@ -83,6 +83,7 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const assignSchedulesOfFaculties = await OfferedCourse.find({
     semesterRegistration,
     faculty,
+    days: { $in: days },
   }).select("days startTime and endTime");
 
   const newSchedule = {
@@ -91,6 +92,7 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     endTime,
   };
 
+  assignSchedulesOfFaculties.forEach((schedule) => {});
   const result = await OfferedCourse.create({ ...payload, academicSemester });
   return result;
 };
