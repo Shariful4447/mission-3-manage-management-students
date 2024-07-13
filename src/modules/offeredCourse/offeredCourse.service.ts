@@ -92,7 +92,9 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     endTime,
   };
 
-  assignSchedulesOfFaculties.forEach((schedule) => {});
+  assignSchedulesOfFaculties.forEach((schedule) => {
+    const existingStartTime = new Date(`1970-01-01T${schedule.startTime}`);
+  });
   const result = await OfferedCourse.create({ ...payload, academicSemester });
   return result;
 };
