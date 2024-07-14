@@ -80,7 +80,7 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
 
   //   get the schedule of faculties in order to remove the conflicts of time
 
-  const assignSchedulesOfFaculties = await OfferedCourse.find({
+  const assignSchedules = await OfferedCourse.find({
     semesterRegistration,
     faculty,
     days: { $in: days },
@@ -92,12 +92,12 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     endTime,
   };
 
-  assignSchedulesOfFaculties.forEach((schedule) => {
+  assignSchedules.forEach((schedule) => {
     const existingStartTime = new Date(`1970-01-01T${schedule.startTime}`);
     const existingEndTime = new Date(`1970-01-01T${schedule.endTime}`);
     const newStartTime = new Date(`1970-01-01T${newSchedule.startTime}`);
     const newEndTime = new Date(`1970-01-01T${newSchedule.endTime}`);
-    if (newStartTime < existingEndTime && newEndTime > newStartTime) {
+    if (newStartTime < existingEndTime && newEndTime > existingStartTime) {
       throw new AppError(
         httpStatus.BAD_REQUEST,
         "startTime and endTime conflict !! This faculty is not availbale on the mentioned day and time "
