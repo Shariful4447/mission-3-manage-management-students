@@ -12,6 +12,12 @@ const createOfferedCourse = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const updateOfferedCourse = catchAsync(async (req, res) => {
+  const result = await OfferedCourseService.updateOfferedCourseIntoDB(req.body);
+  return result;
+});
 export const OfferedCourseController = {
   createOfferedCourse,
+  updateOfferedCourse,
 };

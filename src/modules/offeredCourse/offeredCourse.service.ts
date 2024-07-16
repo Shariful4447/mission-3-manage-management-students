@@ -116,6 +116,9 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   return result;
 };
 
+const updateOfferedCourseIntoDB = async (id) => {};
+
 export const OfferedCourseService = {
   createOfferedCourseIntoDB,
+  updateOfferedCourseIntoDB,
 };
