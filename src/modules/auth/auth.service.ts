@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 import AppError from "../../app/errors/AppError";
 import { User } from "../user/user.model";
@@ -25,5 +26,11 @@ const loginUser = async (payload: TLoginUser) => {
       "user already status not permited, user is blocked"
     );
   }
+  //   checking the password is correct
+  const isPasswordMatched = await bcrypt.compare(
+    payload?.password,
+    isUserPresent?.password
+  );
+  //   access granted send access token to the database
   return {};
 };
